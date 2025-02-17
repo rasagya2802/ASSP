@@ -1,7 +1,7 @@
-package com.example.demo;
+package com.example.demo4;
 
-import com.example.demo.Employee;
-import com.example.demo.EmployeeService;
+import com.example.demo4.Employee;
+import com.example.demo4.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
