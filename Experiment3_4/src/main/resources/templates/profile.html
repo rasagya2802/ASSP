@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>User Profile</title>
+</head>
+<body>
+    <h1>User Profile</h1>
+    <form th:action="@{/profile}" method="post" th:object="${userProfile}">
+        <!-- Username -->
+        <label for="username">Username:</label>
+        <input type="text" id="username" th:field="*{username}" required>
+        <p th:if="${#fields.hasErrors('username')}" th:errors="*{username}" style="color:red;"></p><br><br>
+
+        <!-- Password -->
+        <label for="password">Password:</label>
+        <input type="password" id="password" th:field="*{password}" required>
+        <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color:red;"></p><br><br>
+
+        <!-- Email -->
+        <label for="email">Email:</label>
+        <input type="email" id="email" th:field="*{email}" required>
+        <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color:red;"></p><br><br>
+
+        <!-- Phone -->
+        <label for="phone">Phone:</label>
+        <input type="text" id="phone" th:field="*{phone}" required>
+        <p th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" style="color:red;"></p><br><br>
+
+        <!-- Address -->
+        <label for="address">Address:</label>
+        <input type="text" id="address" th:field="*{address}" required>
+        <p th:if="${#fields.hasErrors('address')}" th:errors="*{address}" style="color:red;"></p><br><br>
+
+        <!-- Age -->
+        <label for="age">Age:</label>
+        <input type="number" id="age" th:field="*{age}" required>
+        <p th:if="${#fields.hasErrors('age')}" th:errors="*{age}" style="color:red;"></p><br><br>
+
+        <!-- Salary -->
+        <label for="salary">Salary:</label>
+        <input type="number" id="salary" th:field="*{salary}" step="0.01" required>
+        <p th:if="${#fields.hasErrors('salary')}" th:errors="*{salary}" style="color:red;"></p><br><br>
+
+        <!-- Terms and Conditions -->
+        <label>
+            <input type="checkbox" th:field="*{termsAccepted}" required>
+            I accept the terms and conditions
+        </label>
+        <p th:if="${#fields.hasErrors('termsAccepted')}" th:errors="*{termsAccepted}" style="color:red;"></p><br><br>
+
+        <!-- Submit Button -->
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>

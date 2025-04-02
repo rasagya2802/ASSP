@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Employee List</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        #employeeList {
+            display: none; /* Initially hide the employee list */
+        }
+    </style>
+</head>
+<body>
+    <h1>Employee List</h1>
+    <button id="loadEmployees">Load Employees</button>
+    <div id="employeeList">
+        <ul>
+            <!-- Employee list will be populated here -->
+        </ul>
+    </div>
+
+    <h2>Add Employee</h2>
+    <form id="addEmployeeForm">
+        Name: <input type="text" name="name" required><br>
+        Email: <input type="email" name="email" required><br>
+        <button type="submit">Add</button>
+    </form>
+
+    <h2>Delete Employee</h2>
+    <form id="deleteEmployeeForm">
+        Enter Employee ID: <input type="number" name="id" required><br>
+        <button type="submit">Delete</button>
+    </form>
+
+    <script>
+        $(document).ready(function() {
+            $('#loadEmployees').on('click', function() {
+                $.ajax({
+                    url: '/getEmployees',
+                    type: 'GET',
+                    success: function(data) {
+                        updateEmployeeList(data);
+                        $('#employeeList').show();
+                    }
+                });
+            });
+
+            $('#addEmployeeForm').on('submit', function(event) {
+                event.preventDefault();
+                $.ajax({
+                    url: '/addEmployee',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function(data) {
+                        alert('Employee added successfully!');
+                    }
+                });
+            });
+
+            $('#deleteEmployeeForm').on('submit', function(event) {
+                event.preventDefault();
+                $.ajax({
+                    url: '/deleteEmployee',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function(data) {
+                        alert('Employee deleted successfully!');
+
+                    }
+                });
+            });
+
+            function updateEmployeeList(employees) {
+                var list = $('#employeeList ul');
+                list.empty();
+                employees.forEach(function(employee) {
+                    list.append('<li>' + employee.id + ': ' + employee.name + ' - ' + employee.email + '</li>');
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Employee Management</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h2>Employee Management</h2>
+   
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Department</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="employeeTable">
+            <!-- Employees will be loaded here -->
+        </tbody>
+    </table>
+   
+    <h3>Add Employee</h3>
+    <input type="text" id="name" placeholder="Name">
+    <input type="text" id="department" placeholder="Department">
+    <button onclick="addEmployee()">Add</button>
+   
+    <h3>Update Employee</h3>
+    <input type="text" id="updateId" placeholder="Employee ID">
+    <input type="text" id="updateName" placeholder="New Name">
+    <input type="text" id="updateDepartment" placeholder="New Department">
+    <button onclick="updateEmployee()">Update</button>
+   
+    <script>
+        $(document).ready(function() {
+            loadEmployees();
+        });
+
+        function loadEmployees() {
+            $.ajax({
+                url: '/api/employees',
+                type: 'GET',
+                success: function(employees) {
+                    let rows = '';
+                    employees.forEach(emp => {
+                        rows += `<tr>
+                                    <td>${emp.id}</td>
+                                    <td>${emp.name}</td>
+                                    <td>${emp.department}</td>
+                                    <td>
+                                        <button onclick="deleteEmployee(${emp.id})">Delete</button>
+                                        <button onclick="fillUpdateForm(${emp.id}, '${emp.name}', '${emp.department}')">Edit</button>
+                                    </td>
+                                </tr>`;
+                    });
+                    $('#employeeTable').html(rows);
+                }
+            });
+        }
+
+        function addEmployee() {
+            let employee = {
+                name: $('#name').val(),
+                department: $('#department').val()
+            };
+            $.ajax({
+                url: '/api/employees',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(employee),
+                success: function() {
+                    loadEmployees();
+                }
+            });
+        }
+
+        function updateEmployee() {
+            let id = $('#updateId').val();
+            let employee = {
+                name: $('#updateName').val(),
+                department: $('#updateDepartment').val()
+            };
+            $.ajax({
+                url: `/api/employees/${id}`,
+                type: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(employee),
+                success: function() {
+                    loadEmployees();
+                }
+            });
+        }
+
+        function deleteEmployee(id) {
+            $.ajax({
+                url: `/api/employees/${id}`,
+                type: 'DELETE',
+                success: function() {
+                    loadEmployees();
+                }
+            });
+        }
+
+        function fillUpdateForm(id, name, department) {
+            $('#updateId').val(id);
+            $('#updateName').val(name);
+            $('#updateDepartment').val(department);
+        }
+    </script>
+</body>
+</html>

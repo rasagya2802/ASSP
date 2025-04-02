@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Employee Management</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Add Employee
+            $("#addEmployee").click(function() {
+                let name = $("#name").val();
+                let email = $("#email").val();
+                $.ajax({
+                    url: "/api/employees/add",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({ name: name, email: email }),
+                    success: function(response) {
+                        alert("Employee added successfully.");
+                        loadEmployees();  // Reload employee list
+                        $("#name").val("");  // Clear input fields
+                        $("#email").val("");
+                    },
+                    error: function() {
+                        alert("Error occurred while adding employee.");
+                    }
+                });
+            });
+
+            // Remove Employee by ID
+            $("#deleteEmployee").click(function() {
+                let id = $("#employeeId").val();
+                if (id) {
+                    $.ajax({
+                        url: `/api/employees/remove/${id}`,
+                        type: "DELETE",
+                        success: function(response) {
+                            if (response.status === "success") {
+                                alert("Employee removed successfully.");
+                                loadEmployees();  // Reload employee list
+                            } else {
+                                alert("Failed to remove employee. ID may not exist.");
+                            }
+                        },
+                        error: function() {
+                            alert("Error occurred while deleting employee.");
+                        }
+                    });
+                } else {
+                    alert("Please enter a valid Employee ID.");
+                }
+            });
+
+            // Update Employee (PUT)
+            $("#updateEmployee").click(function() {
+                let id = $("#updateEmployeeId").val();
+                let name = $("#updateName").val();
+                let email = $("#updateEmail").val();
+                $.ajax({
+                    url: `/api/employees/update/${id}`,
+                    type: "PUT",
+                    contentType: "application/json",
+                    data: JSON.stringify({ name: name, email: email }),
+                    success: function(response) {
+                        alert("Employee updated successfully.");
+                        loadEmployees();  // Reload employee list
+                    },
+                    error: function() {
+                        alert("Error occurred while updating employee.");
+                    }
+                });
+            });
+
+            // Partial Update Employee (PATCH)
+            $("#patchEmployee").click(function() {
+                let id = $("#patchEmployeeId").val();
+                let name = $("#patchName").val();
+                let email = $("#patchEmail").val();
+                let data = {};
+                if (name) data.name = name;
+                if (email) data.email = email;
+
+                $.ajax({
+                    url: `/api/employees/update/${id}`,
+                    type: "PATCH",
+                    contentType: "application/json",
+                    data: JSON.stringify(data),
+                    success: function(response) {
+                        alert("Employee updated successfully.");
+                        loadEmployees();  // Reload employee list
+                    },
+                    error: function() {
+                        alert("Error occurred while partially updating employee.");
+                    }
+                });
+            });
+
+            // Function to load and display employees
+            function loadEmployees() {
+                $.get("/api/employees/load", function(data) {
+                    $("#employeeList").empty();
+                    if (data.length > 0) {
+                        data.forEach(emp => {
+                            $("#employeeList").append(
+                                `<li>ID: ${emp.id}, Name: ${emp.name}, Email: ${emp.email}</li>`
+                            );
+                        });
+                    } else {
+                        $("#employeeList").append("<li>No employees found.</li>");
+                    }
+                });
+            }
+
+            // Load Employees only when "Load Employees" button is pressed
+            $("#loadEmployees").click(function() {
+                loadEmployees();  // Fetch and display the employee list
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Employee Management</h1>
+
+    <!-- Add Employee Section -->
+    <h3>Add Employee</h3>
+    <input type="text" id="name" placeholder="Enter Name">
+    <input type="email" id="email" placeholder="Enter Email">
+    <button id="addEmployee">Add Employee</button>
+
+    <!-- Delete Employee Section -->
+    <h3>Delete Employee</h3>
+    <input type="text" id="employeeId" placeholder="Enter Employee ID">
+    <button id="deleteEmployee">Delete Employee</button>
+
+    <!-- Update Employee Section -->
+    <h3>Update Employee (Full)</h3>
+    <input type="text" id="updateEmployeeId" placeholder="Enter Employee ID">
+    <input type="text" id="updateName" placeholder="Enter New Name">
+    <input type="email" id="updateEmail" placeholder="Enter New Email">
+    <button id="updateEmployee">Update Employee</button>
+
+    <!-- Partially Update Employee Section -->
+    <h3>Update Employee (Partial)</h3>
+    <input type="text" id="patchEmployeeId" placeholder="Enter Employee ID">
+    <input type="text" id="patchName" placeholder="Enter New Name (Optional)">
+    <input type="email" id="patchEmail" placeholder="Enter New Email (Optional)">
+    <button id="patchEmployee">Partially Update Employee</button>
+
+    <!-- Load Employees Section -->
+    <h3>Employee List</h3>
+    <button id="loadEmployees">Load Employees</button>
+    <ul id="employeeList"></ul>
+</body>
+</html>
